@@ -4,28 +4,20 @@ import java.net.Socket;
 import javax.swing.*;
 public class LoginFrame {
     public static void main(String[] args) {
-    JFrame f = new JFrame("Button Example");
-    Keyboard keyboard = new Keyboard();
+    JFrame f = new JFrame("Enter Username");
     final JTextField tf = new JTextField();
     tf.setBounds(50,50, 150,20);
-    JButton b = new JButton("Click Here");
+    JButton b = new JButton("PLay");
     b.setBounds(50,100,95,30);
     b.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e)  {
             try {
-
-                JFrame gameFrame = new JFrame("snake");
-                gameFrame.add(keyboard);
-
-                gameFrame.setSize(400,400);
-                gameFrame.setLayout(null);
-                gameFrame.setVisible(true);
-
+                f.dispose();
                 Socket socket = new Socket("localhost", 1234);
-                Client client = new Client(socket, tf.getText(), Keyboard.keyCode);
+                Client client = new Client(socket, tf.getText());
 
                 client.listenForPacket();
-                client.sendPacket();
+                new GameFrame(client, tf.getText());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

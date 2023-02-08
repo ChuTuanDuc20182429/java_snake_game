@@ -14,16 +14,16 @@ public class Keyboard extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent keyEvent) {
-                System.out.println("Key typed: " + keyEvent.getKeyCode());
+                System.out.println("Key pressed: " + keyEvent.getKeyCode());
                 keyCode = keyEvent.getKeyCode();
             }
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                System.out.println("Key typed: " + keyEvent.getKeyCode());
+                System.out.println("Key released: " + keyEvent.getKeyCode());
                 keyCode = keyEvent.getKeyCode();
             }
         });
-        setFocusable(true);
+
     }
 }
