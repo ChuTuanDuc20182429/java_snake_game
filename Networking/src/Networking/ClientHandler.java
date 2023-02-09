@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientHandler implements Runnable{
-    private static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;

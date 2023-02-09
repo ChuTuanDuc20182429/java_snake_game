@@ -10,7 +10,7 @@ public class Client {
     private ObjectOutputStream out;
     private ObjectInputStream in ;
     private Packet packet;
-    private String clientUsername;
+    public String clientUsername;
 //    private KeyBinding keyBinding;
     private String keyCode;
     public Client(Socket socket, String username) {
@@ -33,7 +33,7 @@ public class Client {
 //            rootPane.getInputMap().put(KeyStroke.getKeyStroke("S"), "downAction");
 //            rootPane.getActionMap().put("downAction", keyBinding.downAction);
 
-            this.packet = new Packet(username, 100, 1);
+            this.packet = new Packet(username, 1);
 
 //            gameFrame.setSize(400,400);
 //            gameFrame.setLayout(null);
@@ -69,7 +69,6 @@ public class Client {
                     while (socket.isConnected()) {
                         packet1 = (Packet) in.readObject();
                         System.out.println(packet1.username);
-                        System.out.println(packet1.score);
                         System.out.println(packet1.keycode);
                         System.out.println("received: " + packet1.keycode);
                     }

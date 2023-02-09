@@ -21,6 +21,7 @@ public class LoginFrame {
 
                 client.listenForPacket();
                 new GameFrame(client);
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

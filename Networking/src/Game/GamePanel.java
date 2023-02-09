@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         this.setFocusable(true);
         // this.addKeyListener(new MyKeyAdapter());
-        keyBinding = new KeyBinding(this, "chutuanduc", snake1, client);
+        keyBinding = new KeyBinding(this, client.clientUsername, snake1, client);
 
         startGame();
     }
