@@ -53,7 +53,7 @@ public class KeyBinding {
                 snake.direction = 'L';
             }
 
-            Packet packet = new Packet(username, 'L', 0);
+            Packet packet = new Packet(username, 'L');
             client.sendPacket(packet);
         }
     }
@@ -66,7 +66,7 @@ public class KeyBinding {
             if (snake.direction != 'L') {
                 snake.direction = 'R';
             }
-            Packet packet = new Packet(username, 'R', 0);
+            Packet packet = new Packet(username, 'R');
             client.sendPacket(packet);
         }
     }
@@ -79,7 +79,7 @@ public class KeyBinding {
             if (snake.direction != 'D') {
                 snake.direction = 'U';
             }
-            Packet packet = new Packet(username, 'U', 0);
+            Packet packet = new Packet(username, 'U');
             client.sendPacket(packet);
         }
     }
@@ -92,7 +92,7 @@ public class KeyBinding {
             if (snake.direction != 'U') {
                 snake.direction = 'D';
             }
-            Packet packet = new Packet(username, 'D', 0);
+            Packet packet = new Packet(username, 'D');
             client.sendPacket(packet);
         }
     }
@@ -104,7 +104,7 @@ public class KeyBinding {
 
             System.out.println(actionEvent.getActionCommand());
             // System.out.println("enter pressed: play again");
-//            new GameFrame(client);
+            // new GameFrame(client);
         }
     }
 
