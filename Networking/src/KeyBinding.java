@@ -12,9 +12,10 @@ public class KeyBinding {
     public String keyCode;
     Client client;
     String username;
-//
+
+    //
     public KeyBinding(JRootPane rootPane, String username, Client client) {
-//
+        //
         leftAction = new LeftAction();
         rightAction = new RightAction();
         upAction = new UpAction();
@@ -30,9 +31,8 @@ public class KeyBinding {
         rootPane.getActionMap().put("upAction", upAction);
         rootPane.getInputMap().put(KeyStroke.getKeyStroke("S"), "downAction");
         rootPane.getActionMap().put("downAction", downAction);
-
-
     }
+
     private class LeftAction extends AbstractAction {
 
         @Override
@@ -40,7 +40,7 @@ public class KeyBinding {
 
             Packet p = new Packet(username, 100, KeyEvent.VK_A);
             client.sendPacket(p);
-//            label.setLocation(label.getX() - 5, label.getY());
+            // label.setLocation(label.getX() - 5, label.getY());
 
         }
     }
@@ -52,7 +52,7 @@ public class KeyBinding {
 
             Packet p = new Packet(username, 100, KeyEvent.VK_D);
             client.sendPacket(p);
-//            label.setLocation(label.getX() + 5, label.getY());
+            // label.setLocation(label.getX() + 5, label.getY());
 
         }
     }
@@ -64,7 +64,7 @@ public class KeyBinding {
 
             Packet p = new Packet(username, 100, KeyEvent.VK_W);
             client.sendPacket(p);
-//            label.setLocation(label.getX(), label.getY() - 5);
+            // label.setLocation(label.getX(), label.getY() - 5);
 
         }
     }
@@ -76,27 +76,28 @@ public class KeyBinding {
 
             Packet p = new Packet(username, 100, KeyEvent.VK_S);
             client.sendPacket(p);
-//            label.setLocation(label.getX(), label.getY() + 5);
+            // label.setLocation(label.getX(), label.getY() + 5);
 
         }
     }
+
     public String getKeyCode() {
         return keyCode;
     }
 
-//    public static void main(String[] args) {
-//        JFrame myFrame;
-//        myFrame = new JFrame();
-//        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        myFrame.setSize(800, 600);
-//        myFrame.setLayout(null);
-//        JRootPane rootPane = myFrame.getRootPane();
-//        myFrame.setVisible(true);
-//
-//
-//        KeyBinding keyBinding = new KeyBinding(rootPane);
-//        while(true) {
-//            System.out.println(keyBinding.getKeyCode());
-//        }
-//    }
+    // public static void main(String[] args) {
+    // JFrame myFrame;
+    // myFrame = new JFrame();
+    // myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // myFrame.setSize(800, 600);
+    // myFrame.setLayout(null);
+    // JRootPane rootPane = myFrame.getRootPane();
+    // myFrame.setVisible(true);
+    //
+    //
+    // KeyBinding keyBinding = new KeyBinding(rootPane);
+    // while(true) {
+    // System.out.println(keyBinding.getKeyCode());
+    // }
+    // }
 }

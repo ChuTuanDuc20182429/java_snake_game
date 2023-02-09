@@ -9,16 +9,20 @@ public class KeyBinding {
     public Action rightAction;
     public Action upAction;
     public Action downAction;
+    public Action playAgain;
     public String keyCode;
     String username;
     Snake snake;
-//
+
+    //
     public KeyBinding(JPanel jPanel, String username, Snake snake) {
-//
+        //
         leftAction = new LeftAction();
         rightAction = new RightAction();
         upAction = new UpAction();
         downAction = new DownAction();
+        playAgain = new PlayAgain();
+
         this.username = username;
         this.snake = snake;
 
@@ -30,9 +34,10 @@ public class KeyBinding {
         jPanel.getActionMap().put("upAction", upAction);
         jPanel.getInputMap().put(KeyStroke.getKeyStroke("S"), "downAction");
         jPanel.getActionMap().put("downAction", downAction);
-
-
+        jPanel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "PlayAgain");
+        jPanel.getActionMap().put("PlayAgain", playAgain);
     }
+
     private class LeftAction extends AbstractAction {
 
         @Override
@@ -40,10 +45,7 @@ public class KeyBinding {
             System.out.println(actionEvent.getActionCommand());
             if (snake.direction != 'R') {
                 snake.direction = 'L';
-
             }
-//            label.setLocation(label.getX() - 5, label.getY());
-
         }
     }
 
@@ -55,9 +57,7 @@ public class KeyBinding {
             System.out.println(actionEvent.getActionCommand());
             if (snake.direction != 'L') {
                 snake.direction = 'R';
-
             }
-
         }
     }
 
@@ -69,10 +69,7 @@ public class KeyBinding {
             System.out.println(actionEvent.getActionCommand());
             if (snake.direction != 'D') {
                 snake.direction = 'U';
-
             }
-//            label.setLocation(label.getX(), label.getY() - 5);
-
         }
     }
 
@@ -84,29 +81,38 @@ public class KeyBinding {
             System.out.println(actionEvent.getActionCommand());
             if (snake.direction != 'U') {
                 snake.direction = 'D';
-
             }
-//            label.setLocation(label.getX(), label.getY() + 5);
-
         }
     }
+
+    private class PlayAgain extends AbstractAction {
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+
+            System.out.println(actionEvent.getActionCommand());
+            // System.out.println("enter pressed: play again");
+            new GameFrame();
+        }
+    }
+
     public String getKeyCode() {
         return keyCode;
     }
 
-//    public static void main(String[] args) {
-//        JFrame myFrame;
-//        myFrame = new JFrame();
-//        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        myFrame.setSize(800, 600);
-//        myFrame.setLayout(null);
-//        JRootPane rootPane = myFrame.getRootPane();
-//        myFrame.setVisible(true);
-//
-//
-//        KeyBinding keyBinding = new KeyBinding(rootPane);
-//        while(true) {
-//            System.out.println(keyBinding.getKeyCode());
-//        }
-//    }
+    // public static void main(String[] args) {
+    // JFrame myFrame;
+    // myFrame = new JFrame();
+    // myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // myFrame.setSize(800, 600);
+    // myFrame.setLayout(null);
+    // JRootPane rootPane = myFrame.getRootPane();
+    // myFrame.setVisible(true);
+    //
+    //
+    // KeyBinding keyBinding = new KeyBinding(rootPane);
+    // while(true) {
+    // System.out.println(keyBinding.getKeyCode());
+    // }
+    // }
 }
