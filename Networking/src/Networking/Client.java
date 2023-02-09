@@ -11,8 +11,8 @@ public class Client {
     private ObjectInputStream in ;
     private Packet packet;
     public String clientUsername;
-//    private KeyBinding keyBinding;
     private String keyCode;
+    Packet receivedPacket;
     public Client(Socket socket, String username) {
         try {
             this.socket = socket;
@@ -20,38 +20,22 @@ public class Client {
             this.in = new ObjectInputStream(socket.getInputStream());
             this.clientUsername = username;
 
-//            this.gameFrame = new JFrame("snake");
-//            JRootPane rootPane = gameFrame.getRootPane();
-//            keyBinding = new KeyBinding(rootPane);
+            // Send packet right after login to the game
+            this.packet = new Packet(username, 1, 0);
+            this.out.writeObject(this.packet);
+            this.out.flush();
 
-//            rootPane.getInputMap().put(KeyStroke.getKeyStroke("A"), "leftAction");
-//            rootPane.getActionMap().put("leftAction", keyBinding.leftAction);
-//            rootPane.getInputMap().put(KeyStroke.getKeyStroke("D"), "rightAction");
-//            rootPane.getActionMap().put("rightAction", keyBinding.rightAction);
-//            rootPane.getInputMap().put(KeyStroke.getKeyStroke("W"), "upAction");
-//            rootPane.getActionMap().put("upAction", keyBinding.upAction);
-//            rootPane.getInputMap().put(KeyStroke.getKeyStroke("S"), "downAction");
-//            rootPane.getActionMap().put("downAction", keyBinding.downAction);
+            this.receivedPacket = (Packet) this.in.readObject();
 
-            this.packet = new Packet(username, 1);
-
-//            gameFrame.setSize(400,400);
-//            gameFrame.setLayout(null);
-//            gameFrame.setVisible(true);
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     public void sendPacket(Packet packet1) {
         try {
-//            while (socket.isConnected()) {
-////                packet.keycode = keyBinding.getKeyCode();
-//                out.writeObject(packet);
-//
-//                out.flush();
-//                System.out.println("sent: " + 0);
-//            }
             if(socket.isConnected()) {
                 out.writeObject(packet1);
                 out.flush();
@@ -81,13 +65,4 @@ public class Client {
             }
         }).start();
     }
-//    public static void main(String[] args) throws IOException{
-//
-//            Socket socket = new Socket("localhost", 1234);
-//            Networking.Client client = new Networking.Client(socket, "chutuanduc");
-//            client.listenForPacket();
-//            client.sendPacket();
-//
-//    }
-
 }

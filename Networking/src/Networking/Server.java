@@ -16,19 +16,11 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println("A new player has joined the game.");
                 ClientHandler clientHandler = new ClientHandler(socket); // establish the connection
-                if (ClientHandler.clientHandlers.size() <= 1){
-                    clientHandler.wait();
-                } else if (ClientHandler.clientHandlers.size() == 2) {
-                    clientHandler.notify();
-                }
-
                 Thread thread = new Thread(clientHandler); // calls the run() method from Networking.ClientHandler.java
                 thread.start(); // This is where the run() method is called
             }
         } catch(IOException e) {
             closeServerSocket();
-        } catch(InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

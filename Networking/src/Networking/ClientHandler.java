@@ -7,7 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientHandler implements Runnable{
-    public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    public static volatile ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    public volatile static int number_players;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -22,8 +23,14 @@ public class ClientHandler implements Runnable{
             this.in = new ObjectInputStream((socket.getInputStream()));
             this.packet = (Packet) this.in.readObject();
             this.clientUsername = this.packet.username;
+            System.out.println("PLayer sent name");
             //add new client to the clientHandlers list
             clientHandlers.add(this);
+            number_players++;
+            System.out.println(ClientHandler.clientHandlers.size());
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -37,6 +44,8 @@ public class ClientHandler implements Runnable{
             try {
                 packetFromClient = (Packet) in.readObject();
                 broadcastPacket(packetFromClient);
+                if (packetFromClient.request) {
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();

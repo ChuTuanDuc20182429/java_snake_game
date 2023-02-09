@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import javax.swing.*;
 public class LoginFrame {
+    public static int n_players = 0;
     public static void main(String[] args) {
     JFrame f = new JFrame("Enter Username");
     final JTextField tf = new JTextField();
@@ -18,10 +19,15 @@ public class LoginFrame {
                 f.dispose();
                 Socket socket = new Socket("localhost", 1234);
                 Client client = new Client(socket, tf.getText());
+                System.out.println(client.receivedPacket.n_players);
+
+                while (client.receivedPacket.n_players <= 1) {
+//                    System.out.println(client.receivedPacket.n_players);
+                }
 
                 client.listenForPacket();
                 new GameFrame(client);
-
+                
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
