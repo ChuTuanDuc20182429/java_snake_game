@@ -1,18 +1,21 @@
 package Game;
 
 import Networking.Client;
+import Networking.Packet;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener {
+    private Client client;
     static final int SCREEN_WIDTH = 600;
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 15;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 55;
+    static final int DELAY = 500;
     int appleX, appleY;
     private Snake snake1 = new Snake(GAME_UNITS, 3, 'R');
     private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
@@ -26,19 +29,36 @@ public class GamePanel extends JPanel implements ActionListener {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
-
+        this.client = client;
         this.setFocusable(true);
-        // this.addKeyListener(new MyKeyAdapter());
         keyBinding = new KeyBinding(this, client.clientUsername, snake1, client);
+        while (!client.setup) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
         startGame();
     }
 
     private void startGame() {
-        snake1.x[0] = 0;
-        snake1.y[0] = 0;
-        snake2.x[0] = 10 * UNIT_SIZE;
-        snake2.y[0] = 10 * UNIT_SIZE;
+        System.out.println("start");
+
+        snake1.x[0] = client.setup_Packet.init_posx_snake1 * UNIT_SIZE;
+        snake1.y[0] = client.setup_Packet.init_posy_snake1 * UNIT_SIZE;
+        snake2.x[0] = client.setup_Packet.init_posx_snake2 * UNIT_SIZE;
+        snake2.y[0] = client.setup_Packet.init_posy_snake2 * UNIT_SIZE;
+        snake1.direction = client.setup_Packet.direction_snake1;
+        snake2.direction = client.setup_Packet.direction_snake2;
+        System.out.println("paket setup prepared");
+
+        Packet p = new Packet(client.clientUsername, snake1.x[0], snake1.y[0], snake2.x[0], snake2.y[0],
+                snake1.direction, snake2.direction, true);
+        client.sendPacket(p);
+        System.out.println("paket setup sended");
         newApple();
         running = true;
         timer = new Timer(DELAY, this);
@@ -112,10 +132,36 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    public void moveSnake(Snake snake, Client client) {
+        for (int i = snake.bodyParts; i > 0; i--) {
+            snake.x[i] = snake.x[i - 1]; // x[0], y[0] is the coordinate of snake's head
+            snake.y[i] = snake.y[i - 1];
+        }
+
+        switch (client.snake_remote_direction) {
+            case 'U':
+                System.out.println("snake 2 U");
+                snake.y[0] = snake.y[0] - UNIT_SIZE; // since the origin is located at top left
+                break;
+            case 'D':
+                System.out.println("snake 2 D");
+                snake.y[0] = snake.y[0] + UNIT_SIZE;
+                break;
+            case 'L':
+                System.out.println("snake 2 L");
+                snake.x[0] = snake.x[0] - UNIT_SIZE;
+                break;
+            case 'R':
+                System.out.println("snake 2 R");
+                snake.x[0] = snake.x[0] + UNIT_SIZE;
+                break;
+        }
+    }
+
     public void move() {
         // loop to iterate all body parts of the snake
         moveSnake(snake1);
-        moveSnake(snake2);
+        moveSnake(snake2, client);
     }
 
     public void checkApple() {
@@ -160,8 +206,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void checkCollision() {
         // check if head collides with body
-        checkSnakeCollision(snake1);
-        checkSnakeCollision(snake2);
+        // checkSnakeCollision(snake1);
+        // checkSnakeCollision(snake2);
     }
 
     public void gameOver(Graphics g) {

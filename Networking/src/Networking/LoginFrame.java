@@ -22,27 +22,18 @@ public class LoginFrame {
                     Socket socket = new Socket("localhost", 1234);
                     Client client = new Client(socket, tf.getText());
                     System.out.println(client.receivedPacket.n_players);
-
-                    // while (client.receivedPacket.n_players <= 1) {
-                    // // System.out.println(client.receivedPacket.n_players);
-                    // }
                     if (client.receivedPacket.ready_to_play) {
                         System.out.println("client.receivedPacket.n_players: " + client.receivedPacket.n_players);
                         client.listenForPacket();
+                        // client.setup_Packet.setup = true;
                         new GameFrame(client);
 
                     } else {
                         System.out.println(client.receivedPacket.ready_to_play);
                         System.out.println("wait for players");
                         client.listenForPacket();
-                        while (!client.receivedPacket.ready_to_play) {
-                            try {
-                                Thread.sleep(1000);
-                                System.out.println("in while " + client.receivedPacket.ready_to_play);
-                            } catch (InterruptedException e1) {
-                                // TODO Auto-generated catch block
-                                e1.printStackTrace();
-                            }
+                        while (!client.ready) {
+                            System.out.println("in while " + client.ready);
                         }
 
                         new GameFrame(client);
