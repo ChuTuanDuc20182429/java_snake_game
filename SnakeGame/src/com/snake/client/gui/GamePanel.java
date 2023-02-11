@@ -13,7 +13,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 15;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 55;
+    static final int DELAY = 200;
     int appleX, appleY;
     private Snake snake1 = new Snake(GAME_UNITS, 3, 'R');
     private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
@@ -37,8 +37,8 @@ public class GamePanel extends JPanel implements ActionListener {
     private void startGame() {
         snake1.x[0] = 0;
         snake1.y[0] = 0;
-//        snake2.x[0] = 10 * UNIT_SIZE;
-//        snake2.y[0] = 10 * UNIT_SIZE;
+        // snake2.x[0] = 10 * UNIT_SIZE;
+        // snake2.y[0] = 10 * UNIT_SIZE;
         newApple();
         running = true;
         timer = new Timer(DELAY, this);
@@ -72,7 +72,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g.setColor(Color.red);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
             drawSnake(g, snake1, Color.green, new Color(45, 100, 0), UNIT_SIZE);
-//            drawSnake(g, snake2, Color.yellow, new Color(190, 204, 0), UNIT_SIZE);
+            // drawSnake(g, snake2, Color.yellow, new Color(190, 204, 0), UNIT_SIZE);
             g.setColor(Color.blue);
             g.setFont(new Font("Ink Free", Font.BOLD, 40));
             FontMetrics metrics = getFontMetrics(g.getFont());
@@ -109,7 +109,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void move() {
         // loop to iterate all body parts of the snake
         moveSnake(snake1);
-//        moveSnake(snake2);
+        // moveSnake(snake2);
     }
 
     public void checkApple() {
@@ -118,11 +118,11 @@ public class GamePanel extends JPanel implements ActionListener {
             snake1.applesEaten++;
             newApple();
         }
-//        if ((snake2.x[0] == appleX) && snake2.y[0] == appleY) {
-//            snake2.bodyParts++;
-//            snake2.applesEaten++;
-//            newApple();
-//        }
+        // if ((snake2.x[0] == appleX) && snake2.y[0] == appleY) {
+        // snake2.bodyParts++;
+        // snake2.applesEaten++;
+        // newApple();
+        // }
     }
 
     public void checkSnakeCollision(Snake snake) {
@@ -155,7 +155,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void checkCollision() {
         // check if head collides with body
         checkSnakeCollision(snake1);
-//        checkSnakeCollision(snake2);
+        // checkSnakeCollision(snake2);
     }
 
     public void gameOver(Graphics g) {
