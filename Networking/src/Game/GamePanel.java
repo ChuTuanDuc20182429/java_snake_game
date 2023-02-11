@@ -15,7 +15,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 15;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 500;
+    static final int DELAY = 200;
     int appleX, appleY;
     private Snake snake1 = new Snake(GAME_UNITS, 3, 'R');
     private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
@@ -138,21 +138,21 @@ public class GamePanel extends JPanel implements ActionListener {
             snake.y[i] = snake.y[i - 1];
         }
 
-        switch (client.snake_remote_direction) {
+        switch (client.get_snake2_direction()) {
             case 'U':
-                System.out.println("snake 2 U");
+                System.out.println("snake opponent U");
                 snake.y[0] = snake.y[0] - UNIT_SIZE; // since the origin is located at top left
                 break;
             case 'D':
-                System.out.println("snake 2 D");
+                System.out.println("snake opponent D");
                 snake.y[0] = snake.y[0] + UNIT_SIZE;
                 break;
             case 'L':
-                System.out.println("snake 2 L");
+                System.out.println("snake opponent L");
                 snake.x[0] = snake.x[0] - UNIT_SIZE;
                 break;
             case 'R':
-                System.out.println("snake 2 R");
+                System.out.println("snake opponent R");
                 snake.x[0] = snake.x[0] + UNIT_SIZE;
                 break;
         }
