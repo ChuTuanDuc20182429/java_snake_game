@@ -19,6 +19,7 @@ public class Packet implements Serializable {
     public char direction_snake2;
     public boolean setup;
     public boolean command;
+    public boolean snake;
 
     public Packet() {
     }
@@ -47,7 +48,7 @@ public class Packet implements Serializable {
 
     public Packet(String username, int posx_snake1, int posy_snake1, int posx_snake2, int posy_snake2,
             char direction_snake1, char direction_snake2,
-            boolean setup) {
+            boolean setup, boolean snake) {
         this.username = username;
         this.init_posx_snake1 = posx_snake1;
         this.init_posy_snake1 = posy_snake1;
@@ -56,6 +57,7 @@ public class Packet implements Serializable {
         this.setup = setup;
         this.direction_snake1 = direction_snake1;
         this.direction_snake2 = direction_snake2;
+        this.snake = snake;
     }
 
     public Packet(String username, char direction, boolean command) {

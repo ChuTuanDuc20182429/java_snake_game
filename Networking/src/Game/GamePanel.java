@@ -15,7 +15,8 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 15;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 200;
+    static final int DELAY = 500;
+    public boolean player1 = false;
     int appleX, appleY;
     private Snake snake1 = new Snake(GAME_UNITS, 3, 'R');
     private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
@@ -46,19 +47,36 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void startGame() {
         System.out.println("start");
+        if (client.setup_Packet.snake) {
+            player1 = true;
+            snake1.x[0] = client.setup_Packet.init_posx_snake1 * UNIT_SIZE;
+            snake1.y[0] = client.setup_Packet.init_posy_snake1 * UNIT_SIZE;
+            snake2.x[0] = client.setup_Packet.init_posx_snake2 * UNIT_SIZE;
+            snake2.y[0] = client.setup_Packet.init_posy_snake2 * UNIT_SIZE;
+            snake1.direction = client.setup_Packet.direction_snake1;
+            snake2.direction = client.setup_Packet.direction_snake2;
+            System.out.println("paket setup prepared");
 
-        snake1.x[0] = client.setup_Packet.init_posx_snake1 * UNIT_SIZE;
-        snake1.y[0] = client.setup_Packet.init_posy_snake1 * UNIT_SIZE;
-        snake2.x[0] = client.setup_Packet.init_posx_snake2 * UNIT_SIZE;
-        snake2.y[0] = client.setup_Packet.init_posy_snake2 * UNIT_SIZE;
-        snake1.direction = client.setup_Packet.direction_snake1;
-        snake2.direction = client.setup_Packet.direction_snake2;
-        System.out.println("paket setup prepared");
+            Packet p = new Packet(client.clientUsername, snake1.x[0], snake1.y[0], snake2.x[0], snake2.y[0],
+                    snake1.direction, snake2.direction, true, true);
+            client.sendPacket(p);
+            System.out.println("paket setup sended");
+        } else {
+            player1 = false;
+            snake1.x[0] = client.setup_Packet.init_posx_snake1 * UNIT_SIZE;
+            snake1.y[0] = client.setup_Packet.init_posy_snake1 * UNIT_SIZE;
+            snake2.x[0] = client.setup_Packet.init_posx_snake2 * UNIT_SIZE;
+            snake2.y[0] = client.setup_Packet.init_posy_snake2 * UNIT_SIZE;
+            snake1.direction = client.setup_Packet.direction_snake1;
+            snake2.direction = client.setup_Packet.direction_snake2;
+            System.out.println("paket setup prepared");
 
-        Packet p = new Packet(client.clientUsername, snake1.x[0], snake1.y[0], snake2.x[0], snake2.y[0],
-                snake1.direction, snake2.direction, true);
-        client.sendPacket(p);
-        System.out.println("paket setup sended");
+            Packet p = new Packet(client.clientUsername, snake1.x[0], snake1.y[0], snake2.x[0], snake2.y[0],
+                    snake1.direction, snake2.direction, true, false);
+            client.sendPacket(p);
+            System.out.println("paket setup sended");
+        }
+
         newApple();
         running = true;
         timer = new Timer(DELAY, this);
@@ -138,7 +156,7 @@ public class GamePanel extends JPanel implements ActionListener {
             snake.y[i] = snake.y[i - 1];
         }
 
-        switch (client.get_snake2_direction()) {
+        switch (client.snake_remote_direction) {
             case 'U':
                 System.out.println("snake opponent U");
                 snake.y[0] = snake.y[0] - UNIT_SIZE; // since the origin is located at top left
@@ -160,8 +178,16 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void move() {
         // loop to iterate all body parts of the snake
-        moveSnake(snake1);
-        moveSnake(snake2, client);
+        if (player1) {
+            System.out.println("player1");
+            moveSnake(snake1);
+            moveSnake(snake2, client);
+        } else {
+            System.out.println("player2");
+            moveSnake(snake2);
+            moveSnake(snake1, client);
+        }
+
     }
 
     public void checkApple() {

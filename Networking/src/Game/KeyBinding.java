@@ -51,10 +51,10 @@ public class KeyBinding {
 
             if (snake.direction != 'R') {
                 snake.direction = 'L';
+                Packet packet = new Packet(username, snake.direction, true);
+                client.sendPacket(packet);
             }
 
-            Packet packet = new Packet(username, snake.direction, true);
-            client.sendPacket(packet);
         }
     }
 
@@ -65,10 +65,10 @@ public class KeyBinding {
 
             if (snake.direction != 'L') {
                 snake.direction = 'R';
+                Packet packet = new Packet(username, snake.direction, true);
+                client.sendPacket(packet);
             }
-            Packet packet = new Packet(username, snake.direction, true);
 
-            client.sendPacket(packet);
         }
     }
 
@@ -79,9 +79,10 @@ public class KeyBinding {
 
             if (snake.direction != 'D') {
                 snake.direction = 'U';
+                Packet packet = new Packet(username, snake.direction, true);
+                client.sendPacket(packet);
             }
-            Packet packet = new Packet(username, snake.direction, true);
-            client.sendPacket(packet);
+
         }
     }
 
@@ -92,9 +93,10 @@ public class KeyBinding {
 
             if (snake.direction != 'U') {
                 snake.direction = 'D';
+                Packet packet = new Packet(username, snake.direction, true);
+                client.sendPacket(packet);
             }
-            Packet packet = new Packet(username, snake.direction, true);
-            client.sendPacket(packet);
+
         }
     }
 

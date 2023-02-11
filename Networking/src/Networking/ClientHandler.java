@@ -99,7 +99,7 @@ public class ClientHandler implements Runnable {
                     System.out.println("clientHandlers.size() " + clientHandlers.size());
                     if (i == 0 && clientHandlers.get(i).setup == false) {
                         System.out.println("i " + i);
-                        Packet p = new Packet(clientUsername, 0, 0, 30, 30, 'R', 'L', true);
+                        Packet p = new Packet(clientUsername, 0, 0, 30, 30, 'R', 'L', true, true);
                         clientHandlers.get(i).sendPacket(clientHandlers.get(i).out, p);
 
                         Packet pac = new Packet();
@@ -113,7 +113,8 @@ public class ClientHandler implements Runnable {
                     }
                     if (i == 1 && clientHandlers.get(i).setup == false) {
                         System.out.println("i " + i);
-                        Packet p = new Packet(clientUsername, 30, 30, 0, 0, 'L', 'R', true);
+                        // Packet p = new Packet(clientUsername, 30, 30, 0, 0, 'L', 'R', true);
+                        Packet p = new Packet(clientUsername, 0, 0, 30, 30, 'R', 'L', true, false);
                         clientHandlers.get(i).sendPacket(clientHandlers.get(i).out, p);
 
                         Packet pac = new Packet();

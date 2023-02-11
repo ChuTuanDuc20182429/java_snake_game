@@ -19,7 +19,7 @@ public class LoginFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     f.dispose();
-                    Socket socket = new Socket("192.168.0.116", 1234);
+                    Socket socket = new Socket("localhost", 1234);
                     Client client = new Client(socket, tf.getText());
                     System.out.println(client.receivedPacket.n_players);
                     if (client.receivedPacket.ready_to_play) {
