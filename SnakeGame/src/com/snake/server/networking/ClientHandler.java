@@ -5,19 +5,28 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class ClientHandler implements Runnable{
-    public static final ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+import com.snake.packets.PlayerDataPacket;
+
+public class ClientHandler implements Runnable {
+    public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    private Queue<PlayerDataPacket> playerData_queue;
+
     public Socket socket;
     public ObjectOutputStream out;
     public ObjectInputStream in;
     public String clientUsername;
     private EventListener listener;
+    public static Server server;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, Server server) {
         try {
             // Set up connection
             this.socket = socket;
+            ClientHandler.server = server;
+            playerData_queue = new LinkedList<>();
             this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream((socket.getInputStream()));
             this.listener = new EventListener();
@@ -26,6 +35,7 @@ public class ClientHandler implements Runnable{
             e.printStackTrace();
         }
     }
+
     @Override
     public void run() {
         try {
@@ -37,11 +47,22 @@ public class ClientHandler implements Runnable{
                 listener.received(p1, this);
             }
         } catch (IOException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
-}
 
+    public void pushTail_Queue_playerData(PlayerDataPacket p) {
+        this.playerData_queue.add(p);
+    }
+
+    public PlayerDataPacket popHead_Queue_playerData() {
+        return this.playerData_queue.poll();
+    }
+
+    public static synchronized int getListclientHandlersSize() {
+        return clientHandlers.size();
+    }
+}

@@ -2,7 +2,6 @@ package com.snake.client.networking;
 
 import com.snake.packets.*;
 
-
 public class EventListener {
     public void received(Object p, Client client) {
         if (p instanceof AddConnectionPacket) {
@@ -23,8 +22,19 @@ public class EventListener {
             } else {
                 client.waitFlag = packet.waitFlag;
             }
+        } else if (p instanceof GameStatePacket) {
+            GameStatePacket packet = (GameStatePacket) p;
+            System.out.println("recieved GameStatePacket packet");
+            client.pushQueue(packet);
+        } else if (p instanceof PlayerDataPacket) {
+            PlayerDataPacket packet = (PlayerDataPacket) p;
+            System.out.println("player name: " + packet.username);
+            System.out.println("direction: " + packet.direction);
+        } else if (p instanceof GameInitPacket) {
+            GameInitPacket packet = (GameInitPacket) p;
+            client.setGameInitPacket(packet);
         }
-    }
 
+    }
 
 }

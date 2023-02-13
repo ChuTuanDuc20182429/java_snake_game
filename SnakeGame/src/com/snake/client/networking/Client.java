@@ -6,17 +6,24 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class Client {
     public String clientUsername;
     private Socket socket;
     private ObjectOutputStream out;
-    private ObjectInputStream in ;
+    private ObjectInputStream in;
     private EventListener listener;
     public Boolean waitFlag;
+    private Queue<GameStatePacket> GameState_queue;
+    private GameInitPacket gameInitPacket;
+
     public Client(Socket socket, String username) {
         try {
             // Set up the connection
+            this.clientUsername = username;
+            this.GameState_queue = new LinkedList<>();
             this.socket = socket;
             this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream(socket.getInputStream());
@@ -39,9 +46,11 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
     public void sendPacket(PlayerDataPacket packet) {
+        System.out.println("send command");
         try {
-            if(socket.isConnected()) {
+            if (socket.isConnected()) {
                 out.writeObject(packet);
                 out.flush();
             }
@@ -49,16 +58,48 @@ public class Client {
             e.printStackTrace();
         }
     }
+
+    public void sendInitRequest() {
+        try {
+            InitGamePlayRequest rqs = new InitGamePlayRequest(true);
+            if (socket.isConnected()) {
+                out.writeObject(rqs);
+                out.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Client getClient() {
+        return this;
+    }
+
+    public void pushQueue(GameStatePacket e) {
+        GameState_queue.add(e);
+    }
+
+    public GameStatePacket popQueue() {
+        return GameState_queue.poll();
+    }
+
+    public synchronized GameInitPacket getGameInitPacket() {
+        return this.gameInitPacket;
+    }
+
+    public synchronized void setGameInitPacket(GameInitPacket p) {
+        this.gameInitPacket = p;
+    }
+
     public void listenForPacket() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                PlayerDataPacket packet;
+                Object packet;
                 try {
                     while (socket.isConnected()) {
-                        packet = (PlayerDataPacket) in.readObject();
-                        System.out.println(packet.username);
-                        System.out.println(packet.direction);
+                        packet = in.readObject();
+                        listener.received(packet, getClient());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

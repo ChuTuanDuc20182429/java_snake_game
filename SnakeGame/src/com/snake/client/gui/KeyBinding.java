@@ -45,10 +45,10 @@ public class KeyBinding {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
 
-            if (snake.direction != 'R') {
-                snake.direction = 'L';
-            }
-
+            // if (snake.direction != 'R') {
+            snake.direction = 'L';
+            // }
+            System.out.println("L");
             PlayerDataPacket packet = new PlayerDataPacket(username, snake.direction);
             client.sendPacket(packet);
         }
@@ -59,9 +59,11 @@ public class KeyBinding {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
 
-            if (snake.direction != 'L') {
-                snake.direction = 'R';
-            }
+            // if (snake.direction != 'L') {
+            snake.direction = 'R';
+            // }
+            System.out.println("R");
+
             PlayerDataPacket packet = new PlayerDataPacket(username, snake.direction);
             client.sendPacket(packet);
         }
@@ -72,9 +74,11 @@ public class KeyBinding {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
 
-            if (snake.direction != 'D') {
-                snake.direction = 'U';
-            }
+            // if (snake.direction != 'D') {
+            snake.direction = 'U';
+            // }
+            System.out.println("U");
+
             PlayerDataPacket packet = new PlayerDataPacket(username, snake.direction);
             client.sendPacket(packet);
         }
@@ -85,9 +89,11 @@ public class KeyBinding {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
 
-            if (snake.direction != 'U') {
-                snake.direction = 'D';
-            }
+            // if (snake.direction != 'U') {
+            snake.direction = 'D';
+            // }
+            System.out.println("D");
+
             PlayerDataPacket packet = new PlayerDataPacket(username, snake.direction);
             client.sendPacket(packet);
         }

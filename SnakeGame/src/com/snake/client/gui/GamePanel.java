@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener {
@@ -13,10 +14,10 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 15;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 200;
+    static final int DELAY = 75;
     int appleX, appleY;
     private Snake snake1 = new Snake(GAME_UNITS, 3, 'R');
-    private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
+    // private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
 
     boolean running = false;
     private Timer timer;
@@ -35,8 +36,8 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void startGame() {
-        snake1.x[0] = 0;
-        snake1.y[0] = 0;
+        // snake1.x[0] = 0;
+        // snake1.y[0] = 0;
         // snake2.x[0] = 10 * UNIT_SIZE;
         // snake2.y[0] = 10 * UNIT_SIZE;
         newApple();
@@ -55,15 +56,24 @@ public class GamePanel extends JPanel implements ActionListener {
         draw(g);
     }
 
-    public void drawSnake(Graphics g, Snake snake, Color headColor, Color bodyColor, int UNIT_SIZE) {
-        for (int i = 0; i < snake.bodyParts; i++) {
-            if (i == 0) {
-                g.setColor(headColor);
-                g.fillRect(snake.x[i], snake.y[i], UNIT_SIZE, UNIT_SIZE);
-            } else {
-                g.setColor(bodyColor);
-                g.fillRect(snake.x[i], snake.y[i], UNIT_SIZE, UNIT_SIZE);
-            }
+    public void drawSnake(Graphics g, final Snake snake, Color headColor, Color bodyColor, int UNIT_SIZE) {
+        // for (int i = 0; i < snake.bodyParts; i++) {
+        // if (i == 0) {
+        // g.setColor(headColor);
+        // g.fillRect(snake.x[i], snake.y[i], UNIT_SIZE, UNIT_SIZE);
+        // } else {
+        // g.setColor(bodyColor);
+        // g.fillRect(snake.x[i], snake.y[i], UNIT_SIZE, UNIT_SIZE);
+        // }
+        // }
+        Snake n = new Snake(snake);
+        g.setColor(headColor);
+        g.fillRect(n.getHead()[0], n.getHead()[1], UNIT_SIZE, UNIT_SIZE);
+        n.popHead();
+
+        g.setColor(bodyColor);
+        for (int[] p : n.getBody()) {
+            g.fillRect(p[0], p[1], UNIT_SIZE, UNIT_SIZE);
         }
     }
 
@@ -85,25 +95,44 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void moveSnake(Snake snake) {
-        for (int i = snake.bodyParts; i > 0; i--) {
-            snake.x[i] = snake.x[i - 1]; // x[0], y[0] is the coordinate of snake's head
-            snake.y[i] = snake.y[i - 1];
-        }
+        // for (int i = snake.bodyParts; i > 0; i--) {
+        // snake.x[i] = snake.x[i - 1]; // x[0], y[0] is the coordinate of snake's head
+        // snake.y[i] = snake.y[i - 1];
+        // }
 
+        // switch (snake.direction) {
+        // case 'U':
+        // snake.y[0] = snake.y[0] - UNIT_SIZE; // since the origin is located at top
+        // left
+        // break;
+        // case 'D':
+        // snake.y[0] = snake.y[0] + UNIT_SIZE;
+        // break;
+        // case 'L':
+        // snake.x[0] = snake.x[0] - UNIT_SIZE;
+        // break;
+        // case 'R':
+        // snake.x[0] = snake.x[0] + UNIT_SIZE;
+        // break;
+        // }
+        snake.pop();
+        int x = snake.getHead()[0];
+        int y = snake.getHead()[1];
         switch (snake.direction) {
             case 'U':
-                snake.y[0] = snake.y[0] - UNIT_SIZE; // since the origin is located at top left
+                snake.pushHead(x, y - UNIT_SIZE);
                 break;
             case 'D':
-                snake.y[0] = snake.y[0] + UNIT_SIZE;
+                snake.pushHead(x, y + UNIT_SIZE);
                 break;
             case 'L':
-                snake.x[0] = snake.x[0] - UNIT_SIZE;
+                snake.pushHead(x - UNIT_SIZE, y);
                 break;
             case 'R':
-                snake.x[0] = snake.x[0] + UNIT_SIZE;
+                snake.pushHead(x + UNIT_SIZE, y);
                 break;
         }
+
     }
 
     public void move() {
@@ -113,43 +142,80 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void checkApple() {
-        if ((snake1.x[0] == appleX) && snake1.y[0] == appleY) {
-            snake1.bodyParts++;
-            snake1.applesEaten++;
-            newApple();
-        }
+        // if ((snake1.x[0] == appleX) && snake1.y[0] == appleY) {
+        // snake1.bodyParts++;
+        // snake1.applesEaten++;
+        // newApple();
+        // }
         // if ((snake2.x[0] == appleX) && snake2.y[0] == appleY) {
         // snake2.bodyParts++;
         // snake2.applesEaten++;
         // newApple();
         // }
+        int x = snake1.getHead()[0];
+        int y = snake1.getHead()[1];
+        if (x == appleX && y == appleY) {
+            snake1.bodyParts++;
+            snake1.applesEaten++;
+            snake1.pushTail(x, y);
+            newApple();
+        }
     }
 
     public void checkSnakeCollision(Snake snake) {
-        for (int i = snake.bodyParts; i > 0; i--) {
-            if ((snake.x[0] == snake.x[i]) && (snake.y[0] == snake.y[i])) {
+        // for (int i = snake.bodyParts; i > 0; i--) {
+        // if ((snake.x[0] == snake.x[i]) && (snake.y[0] == snake.y[i])) {
+        // running = false;
+        // }
+        // }
+        // // check if head touches left border
+        // if (snake.x[0] < 0) {
+        // running = false;
+        // }
+        // // check if head touches right border
+        // if (snake.x[0] > SCREEN_WIDTH) {
+        // running = false;
+        // }
+        // // check if head touches top border
+        // if (snake.y[0] < 0) {
+        // running = false;
+        // }
+        // // check if head touches bottom border
+        // if (snake.y[0] > SCREEN_HEIGHT) {
+        // running = false;
+        // }
+        // if (!running) {
+        // timer.stop();
+        // }
+        LinkedList<int[]> ll = new LinkedList<int[]>(snake.getBody());
+        int elem[] = ll.removeLast();
+
+        for (int[] i : ll) {
+            if (i == elem) {
                 running = false;
             }
+
         }
         // check if head touches left border
-        if (snake.x[0] < 0) {
+        if (elem[0] < 0) {
             running = false;
         }
         // check if head touches right border
-        if (snake.x[0] > SCREEN_WIDTH) {
+        if (elem[0] > SCREEN_WIDTH) {
             running = false;
         }
         // check if head touches top border
-        if (snake.y[0] < 0) {
+        if (elem[1] < 0) {
             running = false;
         }
         // check if head touches bottom border
-        if (snake.y[0] > SCREEN_HEIGHT) {
+        if (elem[1] > SCREEN_HEIGHT) {
             running = false;
         }
         if (!running) {
             timer.stop();
         }
+
     }
 
     public void checkCollision() {
@@ -185,6 +251,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
+        // String command = actionEvent.getActionCommand();
+        // System.out.println("Action command: " + command);
+        // Object source = actionEvent.getSource();
+        // System.out.println("Action event source: " + source);
         if (running) {
             move();
             checkApple();
