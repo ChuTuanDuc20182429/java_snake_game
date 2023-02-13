@@ -32,7 +32,6 @@ public class EventListener {
             PlayerDataPacket packet = (PlayerDataPacket) p;
             System.out.println("Received PlayerDataPacket from " + packet.username);
             clientHandler.pushTail_Queue_playerData(packet);
-            // broadcastPacket(packet, clientHandler);
         } else if (p instanceof InitGamePlayRequest) {
             System.out.println("recieved init rqs");
             sendInitGameData(clientHandler, ClientHandler.clientHandlers.get(0).clientUsername,
@@ -52,11 +51,10 @@ public class EventListener {
 
     public void sendInitGameData(ClientHandler clientHandler, String playerName1, String playerName2) {
         try {
-            ClientHandler.server.game.setPlayers_name(playerName1, playerName2);
-            clientHandler.out.writeObject(ClientHandler.server.game.getGameInitPacket());
+            Server.game.setPlayers_name(playerName1, playerName2);
+            clientHandler.out.writeObject(Server.game.getGameInitPacket());
             clientHandler.out.flush();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

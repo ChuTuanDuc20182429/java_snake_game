@@ -6,14 +6,14 @@ import java.net.Socket;
 
 public class Server {
     ServerSocket serverSocket;
-    public GameLogic game;
+    public static GameLogic game;
 
     public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
     public void startServer() {
-        this.game = new GameLogic();
+        game = new GameLogic();
         game.handlePlayerDataQueue(ClientHandler.clientHandlers);
         try {
             while (!serverSocket.isClosed()) {

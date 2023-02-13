@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private Snake snake1 = new Snake();
     private Snake snake2 = new Snake();
 
-    boolean running = false;
+    public static boolean running = false;
     private Timer timer;
 
     private KeyBinding keyBinding;
@@ -94,44 +94,32 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void gameOver(Graphics g) {
-        // Game over text
-        g.setColor(Color.red);
-        g.setFont(new Font("Ink Free", Font.BOLD, 75));
-        FontMetrics metrics1 = getFontMetrics(g.getFont());
-        g.drawString("Game Over", (SCREEN_WIDTH - metrics1.stringWidth("Game Over"))
-                / 2, SCREEN_HEIGHT / 2);
+        if (client.isWinner) {
+            g.setColor(Color.GREEN);
+            g.setFont(new Font("Ink Free", Font.BOLD, 75));
+            FontMetrics metrics3 = getFontMetrics(g.getFont());
+            g.drawString("YOU WIN", (SCREEN_WIDTH - metrics3.stringWidth("YOU WIN"))
+                    / 2, SCREEN_HEIGHT / 2);
+        } else {
+            g.setColor(Color.red);
+            g.setFont(new Font("Ink Free", Font.BOLD, 75));
+            FontMetrics metrics3 = getFontMetrics(g.getFont());
+            g.drawString("YOU LOSE", (SCREEN_WIDTH - metrics3.stringWidth("YOU LOSE"))
+                    / 2, SCREEN_HEIGHT / 2);
+        }
 
         g.setColor(Color.blue);
         g.setFont(new Font("Ink Free", Font.BOLD, 30));
         FontMetrics metrics2 = getFontMetrics(g.getFont());
-        g.drawString("Your score: " + snake1.applesEaten,
-                (SCREEN_WIDTH - metrics2.stringWidth("Your score: " + snake1.applesEaten)) / 2, 40);
-
-        g.setColor(Color.white);
-        g.setFont(new Font("Ink Free", Font.BOLD, 15));
-        FontMetrics metrics3 = getFontMetrics(g.getFont());
-        g.drawString("Press Enter to play again",
-                (SCREEN_WIDTH - metrics3.stringWidth("Press Enter to play again")) / 2, 500);
-        // while (keyBinding.press_enter) {
-        // startGame();
-        // }
+        if (snake1.playerName.equals(client.clientUsername)) {
+            g.drawString("Your score: " + snake1.applesEaten,
+                    (SCREEN_WIDTH - metrics2.stringWidth("Your score: " + snake1.applesEaten)) / 2, 40);
+        } else {
+            g.drawString("Your score: " + snake2.applesEaten,
+                    (SCREEN_WIDTH - metrics2.stringWidth("Your score: " + snake2.applesEaten)) / 2, 40);
+        }
 
     }
-
-    // private void gameLoop() {
-    // while (running) {
-    // updateGame(client.popQueue());
-    // System.out.println("repaint");
-    // repaint();
-    // try {
-    // Thread.sleep(DELAY);
-    // } catch (InterruptedException e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-    // }
-
-    // }
 
     private void updateGame(GameStatePacket packet) {
         if (packet == null) {
@@ -143,7 +131,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.snake1.direction = packet.snake1_data.direction;
         this.snake1.setBody(packet.snake1_data.body);
         this.snake1.playerName = packet.snake1_data.playerName;
-        System.out.println("this.snake1.playerName: " + this.snake1.playerName);
+        System.out.println("playerName 1: " + this.snake1.playerName);
 
         // Snake 2
         this.snake2.applesEaten = packet.snake2_data.applesEaten;
@@ -151,7 +139,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.snake2.direction = packet.snake2_data.direction;
         this.snake2.setBody(packet.snake2_data.body);
         this.snake2.playerName = packet.snake2_data.playerName;
-        System.out.println("this.snake2.playerName: " + this.snake2.playerName);
+        System.out.println("playerName 2: " + this.snake2.playerName);
 
         // Apple
         this.appleX = packet.appleX;

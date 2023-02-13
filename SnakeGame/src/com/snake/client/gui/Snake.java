@@ -30,20 +30,20 @@ public class Snake {
 
     //
     public Snake() {
-
+        body = new LinkedList<int[]>();
+        this.bodyParts = 3;
+        this.applesEaten = 0;
+        this.direction = 'L';
+        initBody();
     }
 
     public Snake(int GAME_UNIT, int bodyParts, char direction) {
         body = new LinkedList<int[]>();
-        // this.x = new int[GAME_UNIT];
-        // this.y = new int[GAME_UNIT];
         this.bodyParts = bodyParts;
         this.applesEaten = 0;
         this.direction = direction;
         initBody();
-        // for (int[] item : body) {
-        // System.out.println("snake body: " + item[0] + " " + item[1]);
-        // }
+
     }
 
     public Snake(Snake snake) {

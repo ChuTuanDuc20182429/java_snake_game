@@ -18,6 +18,7 @@ public class Client {
     public Boolean waitFlag;
     private Queue<GameStatePacket> GameState_queue;
     private GameInitPacket gameInitPacket;
+    public boolean isWinner;
 
     public Client(Socket socket, String username) {
         try {
@@ -117,7 +118,6 @@ public class Client {
     }
 
     public void closeEveryThing(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
-        // System.out.println("Left game");
         try {
             if (out != null) {
                 out.close();

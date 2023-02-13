@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.snake.packets.PlayerDataPacket;
+import com.snake.packets.PlayerLeftPacket;
 
 public class ClientHandler implements Runnable {
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
@@ -82,10 +83,21 @@ public class ClientHandler implements Runnable {
 
     public void broadcastMessage() {
         System.out.println(clientUsername + " have left");
+        PlayerLeftPacket packet = new PlayerLeftPacket(clientUsername, true);
+        for (ClientHandler cli : ClientHandler.clientHandlers) {
+            try {
+                cli.out.writeObject(packet);
+                cli.out.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void closeEveryThing(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
         removeClientHandler();
+        Server.game.resetGame();
         try {
             if (out != null) {
                 out.close();

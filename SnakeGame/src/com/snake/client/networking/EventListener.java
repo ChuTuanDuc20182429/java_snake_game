@@ -1,20 +1,13 @@
 package com.snake.client.networking;
 
+import javax.crypto.Cipher;
+
+import com.snake.client.gui.GamePanel;
 import com.snake.packets.*;
 
 public class EventListener {
     public void received(Object p, Client client) {
-        // if (p instanceof AddConnectionPacket) {
-        // System.out.println("Received AddConnectionPacket");
 
-        // AddConnectionPacket addConnectionPacket = (AddConnectionPacket) p;
-
-        // } else if (p instanceof RemoveConnectionPacket) {
-        // System.out.println("Received RemoveConnectionPacket");
-
-        // RemoveConnectionPacket packet = (RemoveConnectionPacket) p;
-
-        // } else
         if (p instanceof NotifyPacket) {
             NotifyPacket packet = (NotifyPacket) p;
 
@@ -34,6 +27,13 @@ public class EventListener {
         } else if (p instanceof GameInitPacket) {
             GameInitPacket packet = (GameInitPacket) p;
             client.setGameInitPacket(packet);
+        } else if (p instanceof PlayerLeftPacket) {
+            PlayerLeftPacket packet = (PlayerLeftPacket) p;
+            if (packet.isLeft == true) {
+                System.out.println(packet.playerLeftName + " is left: " + packet.isLeft);
+                client.isWinner = true;
+                GamePanel.running = false;
+            }
         }
 
     }

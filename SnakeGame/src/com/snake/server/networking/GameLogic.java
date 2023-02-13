@@ -2,6 +2,7 @@ package com.snake.server.networking;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 import com.snake.client.gui.Snake;
@@ -25,6 +26,8 @@ public class GameLogic {
     Snake snake2;
     private String playerName1 = "";
     private String playerName2 = "";
+    private boolean snake1Collision = false;
+    private boolean snake2Collision = false;
 
     private GameInitPacket gameInitPacket;
 
@@ -72,21 +75,27 @@ public class GameLogic {
                 return null;
             } else {
                 snake2.direction = p2.direction;
+                moveSnake(snake1);
                 moveSnake(snake2);
                 data_snake1 = new SnakeGameplayData(snake1);
                 data_snake2 = new SnakeGameplayData(snake2);
+                checkCollision(data_snake1.body, data_snake2.body);
                 checkApple(appleX, appleY, data_snake1.body.getFirst(), data_snake2.body.getFirst());
-                return new GameStatePacket(data_snake1, data_snake2, appleX, appleY);
+                return new GameStatePacket(data_snake1, data_snake2, appleX, appleY, snake1Collision, snake2Collision);
             }
         } else {
             if (p2 == null) {
                 snake1.direction = p1.direction;
                 moveSnake(snake1);
+                moveSnake(snake2);
                 data_snake1 = new SnakeGameplayData(snake1);
                 data_snake2 = new SnakeGameplayData(snake2);
+                checkCollision(data_snake1.body, data_snake2.body);
+
                 checkApple(appleX, appleY, data_snake1.body.getFirst(), data_snake2.body.getFirst());
 
-                return new GameStatePacket(data_snake1, data_snake2, appleX, appleY);
+                return new GameStatePacket(data_snake1, data_snake2, appleX, appleY, snake1Collision, snake2Collision);
+
             }
         }
 
@@ -96,6 +105,7 @@ public class GameLogic {
 
             snake2.direction = p2.direction;
             moveSnake(snake2);
+
         } else {
             System.out.println("I suppose this case will not happen");
             snake1.direction = p2.direction;
@@ -106,8 +116,9 @@ public class GameLogic {
         }
         data_snake1 = new SnakeGameplayData(snake1);
         data_snake2 = new SnakeGameplayData(snake2);
+        checkCollision(data_snake1.body, data_snake2.body);
         checkApple(appleX, appleY, data_snake1.body.getFirst(), data_snake2.body.getFirst());
-        return new GameStatePacket(data_snake1, data_snake2, appleX, appleY);
+        return new GameStatePacket(data_snake1, data_snake2, appleX, appleY, snake1Collision, snake2Collision);
     }
 
     public void moveSnake(Snake snake) {
@@ -116,15 +127,31 @@ public class GameLogic {
         int y = snake.getHead()[1];
         switch (snake.direction) {
             case 'U':
+                if (y == 0) {
+                    snake.pushHead(x, SCREEN_HEIGHT);
+                    break;
+                }
                 snake.pushHead(x, y - UNIT_SIZE);
                 break;
             case 'D':
+                if (y == SCREEN_HEIGHT) {
+                    snake.pushHead(x, 0);
+                    break;
+                }
                 snake.pushHead(x, y + UNIT_SIZE);
                 break;
             case 'L':
+                if (x == 0) {
+                    snake.pushHead(SCREEN_WIDTH, y);
+                    break;
+                }
                 snake.pushHead(x - UNIT_SIZE, y);
                 break;
             case 'R':
+                if (x == SCREEN_WIDTH) {
+                    snake.pushHead(0, y);
+                    break;
+                }
                 snake.pushHead(x + UNIT_SIZE, y);
                 break;
         }
@@ -144,18 +171,60 @@ public class GameLogic {
         }
     }
 
+    private void checkCollision(LinkedList<int[]> bodySnake1, LinkedList<int[]> bodySnake2) {
+        LinkedList<int[]> bd1 = new LinkedList<int[]>(bodySnake1);
+        LinkedList<int[]> bd2 = new LinkedList<int[]>(bodySnake2);
+
+        int[] head1 = bd1.removeFirst();
+        // System.out.println("head 1 " + head1[0] + " " + head1[1]);
+        int[] head2 = bd2.removeFirst();
+        // System.out.println("head 2 " + head1[0] + " " + head1[1]);
+
+        if (head1[0] == head2[0] && head1[1] == head2[1]) {
+            this.snake2Collision = true;
+            this.snake1Collision = true;
+            System.out.println("collision");
+        }
+
+        for (int[] part1 : bd1) {
+            if (head2[0] == part1[0] && head2[1] == part1[1]) {
+                this.snake2Collision = true;
+                System.out.println("collision");
+
+            }
+        }
+        for (int[] part2 : bd2) {
+            if (head1[0] == part2[0] && head1[1] == part2[1]) {
+                this.snake1Collision = true;
+                System.out.println("collision");
+
+            }
+        }
+    }
+
     public void handlePlayerDataQueue(ArrayList<ClientHandler> clientHandlers) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
-                    // System.out.println(clientHandlers.size());
-                    // if (clientHandlers.size() >= 2) {
                     if (ClientHandler.getListclientHandlersSize() >= 2) {
-                        PlayerDataPacket p1 = ClientHandler.clientHandlers.get(0).popHead_Queue_playerData();
-                        PlayerDataPacket p2 = ClientHandler.clientHandlers.get(1).popHead_Queue_playerData();
-                        GameStatePacket packetGameState = calculateGameState(p1, p2);
+                        GameStatePacket packetGameState;
+                        PlayerDataPacket p1;
+                        PlayerDataPacket p2;
+                        try {
+                            p1 = ClientHandler.clientHandlers.get(0).popHead_Queue_playerData();
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                            p1 = null;
+                        }
+                        try {
+                            p2 = ClientHandler.clientHandlers.get(1).popHead_Queue_playerData();
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                            p2 = null;
 
+                        }
+                        packetGameState = calculateGameState(p1, p2);
                         if (packetGameState == null) {
                             continue;
                         } else {
@@ -164,23 +233,33 @@ public class GameLogic {
                                     clientHandler.out.writeObject(packetGameState);
                                     clientHandler.out.flush();
                                 } catch (IOException e) {
-                                    // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 }
                             }
                         }
                     }
 
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    // try {
+                    // Thread.sleep(10);
+                    // } catch (InterruptedException e) {
+                    // // TODO Auto-generated catch block
+                    // e.printStackTrace();
+                    // }
                 }
 
             }
         }).start();
+    }
+
+    public void resetGame() {
+        snake1Collision = false;
+        snake2Collision = false;
+        playerName1 = "";
+        playerName2 = "";
+        setup_snake(playerName1, playerName2);
+        newApple();
+        gameInitPacket = new GameInitPacket(SCREEN_WIDTH, SCREEN_HEIGHT, UNIT_SIZE, GAME_UNITS, DELAY, playerName1,
+                playerName2, data_snake1, data_snake2, appleX, appleY);
     }
 
 }

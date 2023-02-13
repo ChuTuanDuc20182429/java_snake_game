@@ -19,12 +19,14 @@ public class GameStatePacket implements Serializable {
     private boolean snake2_collision = false;
 
     public GameStatePacket(SnakeGameplayData snake1_data, SnakeGameplayData snake2_data, int appleX,
-            int appleY) {
+            int appleY, boolean snake1_collision, boolean snake2_collision) {
 
         this.appleX = appleX;
         this.appleY = appleY;
         this.snake1_data = snake1_data;
         this.snake2_data = snake2_data;
+        this.snake1_collision = snake1_collision;
+        this.snake2_collision = snake2_collision;
     }
 
     public void setCollisionStatus(boolean snake1_collision, boolean snake2_collision) {
