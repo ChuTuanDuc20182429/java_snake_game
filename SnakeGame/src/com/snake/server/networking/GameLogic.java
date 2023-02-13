@@ -134,10 +134,12 @@ public class GameLogic {
         if (head_snake1[0] == appleX && head_snake1[1] == appleY) {
             snake1.applesEaten++;
             snake1.bodyParts++;
+            snake1.pushTail(head_snake1[0], head_snake1[1]);
             newApple();
         } else if (head_snake2[0] == appleX && head_snake2[1] == appleY) {
             snake2.applesEaten++;
             snake2.bodyParts++;
+            snake1.pushTail(head_snake2[0], head_snake2[1]);
             newApple();
         }
     }
