@@ -47,6 +47,12 @@ public class ClientHandler implements Runnable {
                 listener.received(p1, this);
             }
         } catch (IOException e) {
+            try {
+                this.in.close();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

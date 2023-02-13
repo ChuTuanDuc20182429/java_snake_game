@@ -91,6 +91,10 @@ public class Client {
         this.gameInitPacket = p;
     }
 
+    public Socket getSocket() {
+        return this.socket;
+    }
+
     public void listenForPacket() {
         new Thread(new Runnable() {
             @Override

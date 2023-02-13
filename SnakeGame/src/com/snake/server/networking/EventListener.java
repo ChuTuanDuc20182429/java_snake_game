@@ -1,6 +1,5 @@
 package com.snake.server.networking;
 
-import com.snake.client.networking.Client;
 import com.snake.packets.*;
 
 import java.io.IOException;

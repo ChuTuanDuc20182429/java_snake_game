@@ -18,7 +18,7 @@ public class GameLogic {
     static final int DELAY = 0;
     int appleX, appleY;
     private Random random;
-    private GameStatePacket gameStatePacket;
+    // private GameStatePacket gameStatePacket;
     SnakeGameplayData data_snake1;
     SnakeGameplayData data_snake2;
     Snake snake1;

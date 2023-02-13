@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GamePanel_test extends JPanel implements ActionListener {
+public class GamePanel extends JPanel implements ActionListener {
     Client client;
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
@@ -25,7 +25,7 @@ public class GamePanel_test extends JPanel implements ActionListener {
 
     private KeyBinding keyBinding;
 
-    GamePanel_test(Client client) {
+    GamePanel(Client client) {
         while (true) {
             if (initGame(client.getGameInitPacket())) {
                 break;
