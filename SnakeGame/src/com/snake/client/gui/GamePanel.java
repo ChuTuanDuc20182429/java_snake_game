@@ -1,71 +1,63 @@
 package com.snake.client.gui;
 
 import com.snake.client.networking.Client;
+import com.snake.packets.GameInitPacket;
+import com.snake.packets.GameStatePacket;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.Random;
 
-public class GamePanel extends JPanel implements ActionListener {
-    static final int SCREEN_WIDTH = 600;
-    static final int SCREEN_HEIGHT = 600;
-    static final int UNIT_SIZE = 15;
-    static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / UNIT_SIZE;
-    static final int DELAY = 75;
+public class GamePanel_test extends JPanel implements ActionListener {
+    Client client;
+    int SCREEN_WIDTH;
+    int SCREEN_HEIGHT;
+    int UNIT_SIZE;
+    int GAME_UNITS;
+    int DELAY;
     int appleX, appleY;
-    private Snake snake1 = new Snake(GAME_UNITS, 3, 'R');
-    // private Snake snake2 = new Snake(GAME_UNITS, 3, 'R');
+    private Snake snake1 = new Snake();
+    private Snake snake2 = new Snake();
 
     boolean running = false;
     private Timer timer;
-    private Random random;
+
     private KeyBinding keyBinding;
 
-    GamePanel(Client client) {
-        random = new Random();
+    GamePanel_test(Client client) {
+        while (true) {
+            if (initGame(client.getGameInitPacket())) {
+                break;
+            }
+        }
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
-        // this.addKeyListener(new MyKeyAdapter());
-        keyBinding = new KeyBinding(this, client.clientUsername, snake1, client);
+        this.client = client;
+        if (client.clientUsername.equals(snake1.playerName)) {
+            keyBinding = new KeyBinding(this, client.clientUsername, snake1, client);
+        } else {
+            keyBinding = new KeyBinding(this, client.clientUsername, snake2, client);
+        }
         startGame();
         System.out.println("Game started");
     }
 
     private void startGame() {
-        // snake1.x[0] = 0;
-        // snake1.y[0] = 0;
-        // snake2.x[0] = 10 * UNIT_SIZE;
-        // snake2.y[0] = 10 * UNIT_SIZE;
-        newApple();
+
         running = true;
         timer = new Timer(DELAY, this);
         timer.start();
     }
 
-    private void newApple() {
-        appleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE; // Apple coordinates
-        appleY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
-    }
-
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
     }
 
     public void drawSnake(Graphics g, final Snake snake, Color headColor, Color bodyColor, int UNIT_SIZE) {
-        // for (int i = 0; i < snake.bodyParts; i++) {
-        // if (i == 0) {
-        // g.setColor(headColor);
-        // g.fillRect(snake.x[i], snake.y[i], UNIT_SIZE, UNIT_SIZE);
-        // } else {
-        // g.setColor(bodyColor);
-        // g.fillRect(snake.x[i], snake.y[i], UNIT_SIZE, UNIT_SIZE);
-        // }
-        // }
         Snake n = new Snake(snake);
         g.setColor(headColor);
         g.fillRect(n.getHead()[0], n.getHead()[1], UNIT_SIZE, UNIT_SIZE);
@@ -79,149 +71,26 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void draw(Graphics g) {
         if (running) {
+            g.setColor(Color.CYAN);
+            g.setFont(new Font("Ink Free", Font.BOLD, 10));
+            FontMetrics metrics1 = getFontMetrics(g.getFont());
+            g.drawString("Player: " + client.clientUsername,
+                    (SCREEN_WIDTH - metrics1.stringWidth("Player: " + client.clientUsername)) / 2, 560);
+
             g.setColor(Color.red);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
             drawSnake(g, snake1, Color.green, new Color(45, 100, 0), UNIT_SIZE);
-            // drawSnake(g, snake2, Color.yellow, new Color(190, 204, 0), UNIT_SIZE);
+            drawSnake(g, snake2, Color.yellow, new Color(190, 204, 0), UNIT_SIZE);
             g.setColor(Color.blue);
-            g.setFont(new Font("Ink Free", Font.BOLD, 40));
+            g.setFont(new Font("Ink Free", Font.BOLD, 20));
             FontMetrics metrics = getFontMetrics(g.getFont());
-            g.drawString("Score: " + snake1.applesEaten,
-                    (SCREEN_WIDTH - metrics.stringWidth("Score: " + snake1.applesEaten)) / 2, 40);
+            g.drawString("Score player 1: " + snake1.applesEaten,
+                    (SCREEN_WIDTH - metrics.stringWidth("Score player 1: " + snake1.applesEaten)) / 2, 20);
+            g.drawString("Score player 2: " + snake2.applesEaten,
+                    (SCREEN_WIDTH - metrics.stringWidth("Score player 2: " + snake1.applesEaten)) / 2, 40);
         } else {
             gameOver(g);
-            // startGame();
         }
-    }
-
-    public void moveSnake(Snake snake) {
-        // for (int i = snake.bodyParts; i > 0; i--) {
-        // snake.x[i] = snake.x[i - 1]; // x[0], y[0] is the coordinate of snake's head
-        // snake.y[i] = snake.y[i - 1];
-        // }
-
-        // switch (snake.direction) {
-        // case 'U':
-        // snake.y[0] = snake.y[0] - UNIT_SIZE; // since the origin is located at top
-        // left
-        // break;
-        // case 'D':
-        // snake.y[0] = snake.y[0] + UNIT_SIZE;
-        // break;
-        // case 'L':
-        // snake.x[0] = snake.x[0] - UNIT_SIZE;
-        // break;
-        // case 'R':
-        // snake.x[0] = snake.x[0] + UNIT_SIZE;
-        // break;
-        // }
-        snake.pop();
-        int x = snake.getHead()[0];
-        int y = snake.getHead()[1];
-        switch (snake.direction) {
-            case 'U':
-                snake.pushHead(x, y - UNIT_SIZE);
-                break;
-            case 'D':
-                snake.pushHead(x, y + UNIT_SIZE);
-                break;
-            case 'L':
-                snake.pushHead(x - UNIT_SIZE, y);
-                break;
-            case 'R':
-                snake.pushHead(x + UNIT_SIZE, y);
-                break;
-        }
-
-    }
-
-    public void move() {
-        // loop to iterate all body parts of the snake
-        moveSnake(snake1);
-        // moveSnake(snake2);
-    }
-
-    public void checkApple() {
-        // if ((snake1.x[0] == appleX) && snake1.y[0] == appleY) {
-        // snake1.bodyParts++;
-        // snake1.applesEaten++;
-        // newApple();
-        // }
-        // if ((snake2.x[0] == appleX) && snake2.y[0] == appleY) {
-        // snake2.bodyParts++;
-        // snake2.applesEaten++;
-        // newApple();
-        // }
-        int x = snake1.getHead()[0];
-        int y = snake1.getHead()[1];
-        if (x == appleX && y == appleY) {
-            snake1.bodyParts++;
-            snake1.applesEaten++;
-            snake1.pushTail(x, y);
-            newApple();
-        }
-    }
-
-    public void checkSnakeCollision(Snake snake) {
-        // for (int i = snake.bodyParts; i > 0; i--) {
-        // if ((snake.x[0] == snake.x[i]) && (snake.y[0] == snake.y[i])) {
-        // running = false;
-        // }
-        // }
-        // // check if head touches left border
-        // if (snake.x[0] < 0) {
-        // running = false;
-        // }
-        // // check if head touches right border
-        // if (snake.x[0] > SCREEN_WIDTH) {
-        // running = false;
-        // }
-        // // check if head touches top border
-        // if (snake.y[0] < 0) {
-        // running = false;
-        // }
-        // // check if head touches bottom border
-        // if (snake.y[0] > SCREEN_HEIGHT) {
-        // running = false;
-        // }
-        // if (!running) {
-        // timer.stop();
-        // }
-        LinkedList<int[]> ll = new LinkedList<int[]>(snake.getBody());
-        int elem[] = ll.removeLast();
-
-        for (int[] i : ll) {
-            if (i == elem) {
-                running = false;
-            }
-
-        }
-        // check if head touches left border
-        if (elem[0] < 0) {
-            running = false;
-        }
-        // check if head touches right border
-        if (elem[0] > SCREEN_WIDTH) {
-            running = false;
-        }
-        // check if head touches top border
-        if (elem[1] < 0) {
-            running = false;
-        }
-        // check if head touches bottom border
-        if (elem[1] > SCREEN_HEIGHT) {
-            running = false;
-        }
-        if (!running) {
-            timer.stop();
-        }
-
-    }
-
-    public void checkCollision() {
-        // check if head collides with body
-        checkSnakeCollision(snake1);
-        // checkSnakeCollision(snake2);
     }
 
     public void gameOver(Graphics g) {
@@ -249,17 +118,94 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
+    // private void gameLoop() {
+    // while (running) {
+    // updateGame(client.popQueue());
+    // System.out.println("repaint");
+    // repaint();
+    // try {
+    // Thread.sleep(DELAY);
+    // } catch (InterruptedException e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
+    // }
+
+    // }
+
+    private void updateGame(GameStatePacket packet) {
+        if (packet == null) {
+            return;
+        }
+        // Snake 1
+        this.snake1.applesEaten = packet.snake1_data.applesEaten;
+        this.snake1.bodyParts = packet.snake1_data.bodyParts;
+        this.snake1.direction = packet.snake1_data.direction;
+        this.snake1.setBody(packet.snake1_data.body);
+        this.snake1.playerName = packet.snake1_data.playerName;
+        System.out.println("this.snake1.playerName: " + this.snake1.playerName);
+
+        // Snake 2
+        this.snake2.applesEaten = packet.snake2_data.applesEaten;
+        this.snake2.bodyParts = packet.snake2_data.bodyParts;
+        this.snake2.direction = packet.snake2_data.direction;
+        this.snake2.setBody(packet.snake2_data.body);
+        this.snake2.playerName = packet.snake2_data.playerName;
+        System.out.println("this.snake2.playerName: " + this.snake2.playerName);
+
+        // Apple
+        this.appleX = packet.appleX;
+        this.appleY = packet.appleY;
+        System.out.println("apple :" + this.appleX + " " + this.appleY);
+
+        if (packet.getCollisionStatus_snake1()) {
+            running = false;
+        } else if (packet.getCollisionStatus_snake2()) {
+            running = false;
+        }
+
+    }
+
+    private boolean initGame(GameInitPacket gameInitPacket) {
+        if (gameInitPacket == null) {
+            return false;
+        }
+        this.SCREEN_WIDTH = gameInitPacket.SCREEN_WIDTH;
+        this.SCREEN_HEIGHT = gameInitPacket.SCREEN_HEIGHT;
+        this.DELAY = gameInitPacket.DELAY;
+        this.GAME_UNITS = gameInitPacket.GAME_UNITS;
+        this.UNIT_SIZE = gameInitPacket.UNIT_SIZE;
+        // Snake 1
+        this.snake1.applesEaten = gameInitPacket.snake1_data.applesEaten;
+        this.snake1.bodyParts = gameInitPacket.snake1_data.bodyParts;
+        this.snake1.direction = gameInitPacket.snake1_data.direction;
+        this.snake1.setBody(gameInitPacket.snake1_data.body);
+        this.snake1.playerName = gameInitPacket.snake1_data.playerName;
+        System.out.println("this.snake1.playerName: " + this.snake1.playerName);
+
+        // Snake 2
+        this.snake2.applesEaten = gameInitPacket.snake2_data.applesEaten;
+        this.snake2.bodyParts = gameInitPacket.snake2_data.bodyParts;
+        this.snake2.direction = gameInitPacket.snake2_data.direction;
+        this.snake2.setBody(gameInitPacket.snake2_data.body);
+        this.snake2.playerName = gameInitPacket.snake2_data.playerName;
+        System.out.println("this.snake2.playerName: " + this.snake2.playerName);
+
+        // Apple
+        this.appleX = gameInitPacket.appleX;
+        this.appleY = gameInitPacket.appleY;
+        System.out.println("apple :" + this.appleX + " " + this.appleY);
+        return true;
+
+    }
+
     @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        // String command = actionEvent.getActionCommand();
-        // System.out.println("Action command: " + command);
-        // Object source = actionEvent.getSource();
-        // System.out.println("Action event source: " + source);
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
         if (running) {
-            move();
-            checkApple();
-            checkCollision();
+            updateGame(client.popQueue());
         }
         repaint();
+
     }
 }

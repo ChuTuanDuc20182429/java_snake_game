@@ -15,7 +15,7 @@ public class GameLogic {
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 15;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
-    static final int DELAY = 75;
+    static final int DELAY = 0;
     int appleX, appleY;
     private Random random;
     private GameStatePacket gameStatePacket;
@@ -139,7 +139,7 @@ public class GameLogic {
         } else if (head_snake2[0] == appleX && head_snake2[1] == appleY) {
             snake2.applesEaten++;
             snake2.bodyParts++;
-            snake1.pushTail(head_snake2[0], head_snake2[1]);
+            snake2.pushTail(head_snake2[0], head_snake2[1]);
             newApple();
         }
     }
