@@ -51,9 +51,11 @@ public class ClientHandler implements Runnable {
                 this.in.close();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
-                e1.printStackTrace();
+                System.out.println("socket can't close");
+                // e1.printStackTrace();
             }
-            e.printStackTrace();
+            // e.printStackTrace();
+            closeEveryThing(socket, out, in);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -70,5 +72,34 @@ public class ClientHandler implements Runnable {
 
     public static synchronized int getListclientHandlersSize() {
         return clientHandlers.size();
+    }
+
+    public void removeClientHandler() {
+        clientHandlers.remove(this);
+        broadcastMessage();
+
+    }
+
+    public void broadcastMessage() {
+        System.out.println(clientUsername + " have left");
+    }
+
+    public void closeEveryThing(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
+        removeClientHandler();
+        try {
+            if (out != null) {
+                out.close();
+            }
+            if (in != null) {
+                in.close();
+
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

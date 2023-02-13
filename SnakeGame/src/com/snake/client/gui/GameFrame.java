@@ -17,13 +17,9 @@ public class GameFrame extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.out.println("Window closing");
-                try {
-                    client.getSocket().close();
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+                System.out.println("Left game");
+                client.closeEveryThing(client.getSocket(), client.out, client.in);
+
             }
         });
         this.setResizable(false);

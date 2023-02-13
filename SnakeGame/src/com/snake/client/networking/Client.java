@@ -12,8 +12,8 @@ import java.util.LinkedList;
 public class Client {
     public String clientUsername;
     private Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    public ObjectOutputStream out;
+    public ObjectInputStream in;
     private EventListener listener;
     public Boolean waitFlag;
     private Queue<GameStatePacket> GameState_queue;
@@ -106,12 +106,32 @@ public class Client {
                         listener.received(packet, getClient());
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
+                    closeEveryThing(socket, out, in);
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
                 }
 
             }
         }).start();
+    }
+
+    public void closeEveryThing(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
+        // System.out.println("Left game");
+        try {
+            if (out != null) {
+                out.close();
+            }
+            if (in != null) {
+                in.close();
+
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

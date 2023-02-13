@@ -12,7 +12,6 @@ public class EventListener {
             clientHandler.clientUsername = packet.clientUsername;
             ClientHandler.clientHandlers.add(clientHandler);
             System.out.println(clientHandler.clientUsername + " has joined the game!");
-            System.out.println(ClientHandler.clientHandlers.size());
 
             // check number of player
             while (ClientHandler.clientHandlers.size() <= 1) {
@@ -36,8 +35,6 @@ public class EventListener {
             // broadcastPacket(packet, clientHandler);
         } else if (p instanceof InitGamePlayRequest) {
             System.out.println("recieved init rqs");
-            System.out.println(ClientHandler.clientHandlers.get(0).clientUsername + " "
-                    + ClientHandler.clientHandlers.get(1).clientUsername);
             sendInitGameData(clientHandler, ClientHandler.clientHandlers.get(0).clientUsername,
                     ClientHandler.clientHandlers.get(1).clientUsername);
         }
