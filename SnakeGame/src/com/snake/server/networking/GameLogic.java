@@ -1,15 +1,15 @@
 package com.snake.server.networking;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
-
 import com.snake.client.gui.Snake;
 import com.snake.client.networking.SnakeGameplayData;
 import com.snake.packets.GameInitPacket;
 import com.snake.packets.GameStatePacket;
 import com.snake.packets.PlayerDataPacket;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Random;
 
 public class GameLogic {
     static final int SCREEN_WIDTH = 600;
@@ -75,7 +75,7 @@ public class GameLogic {
                 return null;
             } else {
                 snake2.direction = p2.direction;
-                moveSnake(snake1);
+//                moveSnake(snake1);
                 moveSnake(snake2);
                 data_snake1 = new SnakeGameplayData(snake1);
                 data_snake2 = new SnakeGameplayData(snake2);
@@ -87,7 +87,7 @@ public class GameLogic {
             if (p2 == null) {
                 snake1.direction = p1.direction;
                 moveSnake(snake1);
-                moveSnake(snake2);
+//                moveSnake(snake2);
                 data_snake1 = new SnakeGameplayData(snake1);
                 data_snake2 = new SnakeGameplayData(snake2);
                 checkCollision(data_snake1.body, data_snake2.body);
