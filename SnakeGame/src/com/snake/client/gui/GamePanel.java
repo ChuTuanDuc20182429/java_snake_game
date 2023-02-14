@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class GamePanel extends JPanel implements ActionListener {
     Client client;
@@ -100,6 +104,7 @@ public class GamePanel extends JPanel implements ActionListener {
             FontMetrics metrics3 = getFontMetrics(g.getFont());
             g.drawString("YOU WIN", (SCREEN_WIDTH - metrics3.stringWidth("YOU WIN"))
                     / 2, SCREEN_HEIGHT / 2);
+            scoreUpdated(snake1.applesEaten, client.clientUsername);
         } else {
             g.setColor(Color.red);
             g.setFont(new Font("Ink Free", Font.BOLD, 75));
@@ -195,5 +200,23 @@ public class GamePanel extends JPanel implements ActionListener {
         }
         repaint();
 
+    }
+
+    public void scoreUpdated(int score, String playeName) {
+        try {
+            String url = "jdbc:mysql://localhost:3306/HighScore";
+            String username = "debian-sys-maint";
+            String password = "CNCTEDLTOWKK1fFS";
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("update HighScore set Score = " + score + " where Username = '" + playeName + "'");
+
+            connection.close();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
