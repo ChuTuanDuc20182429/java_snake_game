@@ -8,6 +8,7 @@ public class Server {
     ServerSocket serverSocket;
     public static GameLogic game;
 
+
     public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }

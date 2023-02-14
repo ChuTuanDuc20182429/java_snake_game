@@ -69,6 +69,13 @@ public class Snake {
         }
     }
 
+    public void initBody(int x, int y) {
+        for (int i = 0; i < bodyParts; i++) {
+            // this.pushHead(x, y);
+            this.getBody().set(i, new int[] { x, y });
+        }
+    }
+
     public int[] getHead() {
         // System.out.println("get head call :" + body.getFirst()[0] + " " +
         // body.getFirst()[1]);

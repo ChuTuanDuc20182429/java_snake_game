@@ -8,10 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class GamePanel extends JPanel implements ActionListener {
     Client client;
@@ -104,16 +100,16 @@ public class GamePanel extends JPanel implements ActionListener {
             FontMetrics metrics3 = getFontMetrics(g.getFont());
             g.drawString("YOU WIN", (SCREEN_WIDTH - metrics3.stringWidth("YOU WIN"))
                     / 2, SCREEN_HEIGHT / 2);
-            scoreUpdated(snake1.applesEaten, snake1.playerName);
-            scoreUpdated(snake2.applesEaten, snake2.playerName);
+//            scoreUpdated(snake1.applesEaten, snake1.playerName);
+//            scoreUpdated(snake2.applesEaten, snake2.playerName);
         } else {
             g.setColor(Color.red);
             g.setFont(new Font("Ink Free", Font.BOLD, 75));
             FontMetrics metrics3 = getFontMetrics(g.getFont());
             g.drawString("YOU LOSE", (SCREEN_WIDTH - metrics3.stringWidth("YOU LOSE"))
                     / 2, SCREEN_HEIGHT / 2);
-            scoreUpdated(snake1.applesEaten, snake1.playerName);
-            scoreUpdated(snake2.applesEaten, snake2.playerName);
+//            scoreUpdated(snake1.applesEaten, snake1.playerName);
+//            scoreUpdated(snake2.applesEaten, snake2.playerName);
         }
 
         g.setColor(Color.blue);
@@ -205,21 +201,21 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
-    public void scoreUpdated(int score, String playeName) {
-        try {
-            String url = "jdbc:mysql://localhost:3306/HighScore";
-            String username = "debian-sys-maint";
-            String password = "CNCTEDLTOWKK1fFS";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, username, password);
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("update HighScore set Score = " + score + " where Username = '" + playeName + "'");
-
-            connection.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public void scoreUpdated(int score, String playerName) {
+//        try {
+//            String url = "jdbc:mysql://localhost:3306/HighScore";
+//            String username = "debian-sys-maint";
+//            String password = "CNCTEDLTOWKK1fFS";
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Connection connection = DriverManager.getConnection(url, username, password);
+//            Statement statement = connection.createStatement();
+//            statement.executeUpdate("update HighScore set Score = " + score + " where Username = '" + playerName + "'");
+//
+//            connection.close();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

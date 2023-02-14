@@ -1,5 +1,8 @@
 package com.snake.server.networking;
 
+import com.snake.packets.PlayerDataPacket;
+import com.snake.packets.PlayerLeftPacket;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,9 +10,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import com.snake.packets.PlayerDataPacket;
-import com.snake.packets.PlayerLeftPacket;
 
 public class ClientHandler implements Runnable {
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
@@ -22,6 +22,7 @@ public class ClientHandler implements Runnable {
     private EventListener listener;
     public static Server server;
 
+
     public ClientHandler(Socket socket, Server server) {
         try {
             // Set up connection
@@ -31,6 +32,7 @@ public class ClientHandler implements Runnable {
             this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream((socket.getInputStream()));
             this.listener = new EventListener();
+
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -5,6 +5,9 @@ import com.snake.packets.*;
 import java.io.IOException;
 
 public class EventListener {
+    private String url = "jdbc:mysql://localhost:3306/HighScore";
+    private String username = "debian-sys-maint";
+    private String password = "CNCTEDLTOWKK1fFS";
     public void received(Object p, ClientHandler clientHandler) {
         if (p instanceof AddConnectionPacket) {
             AddConnectionPacket packet = (AddConnectionPacket) p;
@@ -19,7 +22,8 @@ public class EventListener {
                 sendNotify(true, clientHandler);
             }
             System.out.println("Sent notifyPacket to " + clientHandler.clientUsername);
-
+            DatabaseAccess databaseAccess = new DatabaseAccess(this.url, this.username, this.password);
+            databaseAccess.addNewRecord(packet.clientUsername);
             sendNotify(false, clientHandler);
 
         } else if (p instanceof RemoveConnectionPacket) {

@@ -30,6 +30,10 @@ public class GameLogic {
     private boolean snake2Collision = false;
 
     private GameInitPacket gameInitPacket;
+    private String url = "jdbc:mysql://localhost:3306/HighScore";
+    private String username = "debian-sys-maint";
+    private String password = "CNCTEDLTOWKK1fFS";
+    private DatabaseAccess databaseAccess;
 
     public GameLogic() {
         random = new Random();
@@ -37,6 +41,7 @@ public class GameLogic {
         newApple();
         gameInitPacket = new GameInitPacket(SCREEN_WIDTH, SCREEN_HEIGHT, UNIT_SIZE, GAME_UNITS, DELAY, playerName1,
                 playerName2, data_snake1, data_snake2, appleX, appleY);
+        databaseAccess = new DatabaseAccess(this.url, this.username, this.password);
     }
 
     private void newApple() {
@@ -48,11 +53,13 @@ public class GameLogic {
         // snake player 1
         snake1 = new Snake(playerName1, GAME_UNITS, 3, 'R');
         snake1.setHead(0, 0);
+        snake1.initBody(0, 0);
         data_snake1 = new SnakeGameplayData(snake1);
 
         // snake player 2
         snake2 = new Snake(playerName2, GAME_UNITS, 3, 'L');
         snake2.setHead(39 * UNIT_SIZE, 39 * UNIT_SIZE);
+        snake2.initBody(39 * UNIT_SIZE, 39 * UNIT_SIZE);
         data_snake2 = new SnakeGameplayData(snake2);
     }
 
@@ -77,6 +84,7 @@ public class GameLogic {
                 snake2.direction = p2.direction;
 //                moveSnake(snake1);
                 moveSnake(snake2);
+                //
                 data_snake1 = new SnakeGameplayData(snake1);
                 data_snake2 = new SnakeGameplayData(snake2);
                 checkCollision(data_snake1.body, data_snake2.body);
@@ -183,21 +191,28 @@ public class GameLogic {
         if (head1[0] == head2[0] && head1[1] == head2[1]) {
             this.snake2Collision = true;
             this.snake1Collision = true;
-            System.out.println("collision");
+
+            System.out.println("collision1");
+            databaseAccess.updatePlayerScore(snake1.applesEaten, snake1.playerName);
+            databaseAccess.updatePlayerScore(snake2.applesEaten, snake2.playerName);
         }
 
         for (int[] part1 : bd1) {
             if (head2[0] == part1[0] && head2[1] == part1[1]) {
                 this.snake2Collision = true;
-                System.out.println("collision");
-
+                System.out.println("collision2");
+                databaseAccess.updatePlayerScore(snake1.applesEaten, snake1.playerName);
+                databaseAccess.updatePlayerScore(snake2.applesEaten, snake2.playerName);
             }
         }
         for (int[] part2 : bd2) {
             if (head1[0] == part2[0] && head1[1] == part2[1]) {
                 this.snake1Collision = true;
-                System.out.println("collision");
-
+                System.out.println("checkpoint");
+                System.out.println("innora " + head1[0] + " " + head1[1] + " and " + part2[0] + " " + part2[1]);
+                System.out.println("collision3");
+                databaseAccess.updatePlayerScore(snake1.applesEaten, snake1.playerName);
+                databaseAccess.updatePlayerScore(snake2.applesEaten, snake2.playerName);
             }
         }
     }
@@ -207,6 +222,7 @@ public class GameLogic {
             @Override
             public void run() {
                 while (true) {
+                    // If there are two players connecting to the server
                     if (ClientHandler.getListclientHandlersSize() >= 2) {
                         GameStatePacket packetGameState;
                         PlayerDataPacket p1;
@@ -224,6 +240,7 @@ public class GameLogic {
                             p2 = null;
 
                         }
+                        // Calculate new game state and send broadcast it to clients
                         packetGameState = calculateGameState(p1, p2);
                         if (packetGameState == null) {
                             continue;
