@@ -22,8 +22,8 @@ public class EventListener {
             client.pushQueue(packet);
         } else if (p instanceof PlayerDataPacket) {
             PlayerDataPacket packet = (PlayerDataPacket) p;
-            System.out.println("player name: " + packet.username);
-            System.out.println("direction: " + packet.direction);
+            // System.out.println("player name: " + packet.username);
+            // System.out.println("direction: " + packet.direction);
         } else if (p instanceof GameInitPacket) {
             GameInitPacket packet = (GameInitPacket) p;
             client.setGameInitPacket(packet);

@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class GamePanel extends JPanel implements ActionListener {
     Client client;
@@ -19,6 +23,8 @@ public class GamePanel extends JPanel implements ActionListener {
     int appleX, appleY;
     private Snake snake1 = new Snake();
     private Snake snake2 = new Snake();
+    private boolean Isplayer1Win = false;
+    private boolean Isplayer2Win = false;
 
     public static boolean running = false;
     private Timer timer;
@@ -94,22 +100,23 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void gameOver(Graphics g) {
-        if (client.isWinner) {
+        if ((client.clientUsername.equals(snake1.playerName) && Isplayer1Win)
+                || (client.clientUsername.equals(snake2.playerName) && Isplayer2Win)) {
             g.setColor(Color.GREEN);
             g.setFont(new Font("Ink Free", Font.BOLD, 75));
             FontMetrics metrics3 = getFontMetrics(g.getFont());
             g.drawString("YOU WIN", (SCREEN_WIDTH - metrics3.stringWidth("YOU WIN"))
                     / 2, SCREEN_HEIGHT / 2);
-//            scoreUpdated(snake1.applesEaten, snake1.playerName);
-//            scoreUpdated(snake2.applesEaten, snake2.playerName);
+            // scoreUpdated(snake1.applesEaten, snake1.playerName);
+            // scoreUpdated(snake2.applesEaten, snake2.playerName);
         } else {
             g.setColor(Color.red);
             g.setFont(new Font("Ink Free", Font.BOLD, 75));
             FontMetrics metrics3 = getFontMetrics(g.getFont());
             g.drawString("YOU LOSE", (SCREEN_WIDTH - metrics3.stringWidth("YOU LOSE"))
                     / 2, SCREEN_HEIGHT / 2);
-//            scoreUpdated(snake1.applesEaten, snake1.playerName);
-//            scoreUpdated(snake2.applesEaten, snake2.playerName);
+            // scoreUpdated(snake1.applesEaten, snake1.playerName);
+            // scoreUpdated(snake2.applesEaten, snake2.playerName);
         }
 
         g.setColor(Color.blue);
@@ -135,7 +142,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.snake1.direction = packet.snake1_data.direction;
         this.snake1.setBody(packet.snake1_data.body);
         this.snake1.playerName = packet.snake1_data.playerName;
-        System.out.println("playerName 1: " + this.snake1.playerName);
+        // System.out.println("playerName 1: " + this.snake1.playerName);
 
         // Snake 2
         this.snake2.applesEaten = packet.snake2_data.applesEaten;
@@ -143,16 +150,23 @@ public class GamePanel extends JPanel implements ActionListener {
         this.snake2.direction = packet.snake2_data.direction;
         this.snake2.setBody(packet.snake2_data.body);
         this.snake2.playerName = packet.snake2_data.playerName;
-        System.out.println("playerName 2: " + this.snake2.playerName);
+        // System.out.println("playerName 2: " + this.snake2.playerName);
 
         // Apple
         this.appleX = packet.appleX;
         this.appleY = packet.appleY;
-        System.out.println("apple :" + this.appleX + " " + this.appleY);
+        // System.out.println("apple :" + this.appleX + " " + this.appleY);
 
         if (packet.getCollisionStatus_snake1()) {
+            this.Isplayer1Win = packet.Isplayer1Win;
+            this.Isplayer2Win = packet.Isplayer2Win;
+            System.out.println(this.Isplayer1Win + " " + this.Isplayer2Win);
             running = false;
         } else if (packet.getCollisionStatus_snake2()) {
+            this.Isplayer1Win = packet.Isplayer1Win;
+            this.Isplayer2Win = packet.Isplayer2Win;
+            System.out.println(this.Isplayer1Win + " " + this.Isplayer2Win);
+
             running = false;
         }
 
@@ -173,7 +187,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.snake1.direction = gameInitPacket.snake1_data.direction;
         this.snake1.setBody(gameInitPacket.snake1_data.body);
         this.snake1.playerName = gameInitPacket.snake1_data.playerName;
-        System.out.println("this.snake1.playerName: " + this.snake1.playerName);
+        // System.out.println("this.snake1.playerName: " + this.snake1.playerName);
 
         // Snake 2
         this.snake2.applesEaten = gameInitPacket.snake2_data.applesEaten;
@@ -181,12 +195,12 @@ public class GamePanel extends JPanel implements ActionListener {
         this.snake2.direction = gameInitPacket.snake2_data.direction;
         this.snake2.setBody(gameInitPacket.snake2_data.body);
         this.snake2.playerName = gameInitPacket.snake2_data.playerName;
-        System.out.println("this.snake2.playerName: " + this.snake2.playerName);
+        // System.out.println("this.snake2.playerName: " + this.snake2.playerName);
 
         // Apple
         this.appleX = gameInitPacket.appleX;
         this.appleY = gameInitPacket.appleY;
-        System.out.println("apple :" + this.appleX + " " + this.appleY);
+        // System.out.println("apple :" + this.appleX + " " + this.appleY);
         return true;
 
     }
@@ -201,21 +215,21 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
-//    public void scoreUpdated(int score, String playerName) {
-//        try {
-//            String url = "jdbc:mysql://localhost:3306/HighScore";
-//            String username = "debian-sys-maint";
-//            String password = "CNCTEDLTOWKK1fFS";
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            Connection connection = DriverManager.getConnection(url, username, password);
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate("update HighScore set Score = " + score + " where Username = '" + playerName + "'");
-//
-//            connection.close();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public void scoreUpdated(int score, String playeName) {
+        try {
+            String url = "jdbc:mysql://192.168.0.116:3306/HighScore";
+            String username = "tuan";
+            String password = "password";
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("update HighScore set Score = " + score + " where Username = '" + playeName + "'");
+
+            connection.close();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

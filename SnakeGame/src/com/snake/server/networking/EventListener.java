@@ -8,6 +8,7 @@ public class EventListener {
     private String url = "jdbc:mysql://localhost:3306/HighScore";
     private String username = "debian-sys-maint";
     private String password = "CNCTEDLTOWKK1fFS";
+
     public void received(Object p, ClientHandler clientHandler) {
         if (p instanceof AddConnectionPacket) {
             AddConnectionPacket packet = (AddConnectionPacket) p;

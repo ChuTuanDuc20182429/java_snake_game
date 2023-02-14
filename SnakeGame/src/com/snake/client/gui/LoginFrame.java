@@ -7,13 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.*;
 
 public class LoginFrame {
 
     public static void main(String[] args) {
-//        String url = "jdbc:mysql://localhost:3306/HighScore";
-//        String username = "debian-sys-maint";
-//        String password = "CNCTEDLTOWKK1fFS";
+        // String url = "jdbc:mysql://192.168.0.116:3306/HighScore";
+        // String username = "tuan";
+        // String password = "password";
         JFrame f = new JFrame("Enter Username");
         final JTextField tf = new JTextField();
         tf.setBounds(50, 50, 150, 20);
@@ -26,12 +27,13 @@ public class LoginFrame {
                     Socket socket = new Socket("localhost", 1234);
                     Client client = new Client(socket, tf.getText());
 
-//                    Class.forName("com.mysql.cj.jdbc.Driver");
-//                    Connection connection = DriverManager.getConnection(url, username, password);
-//                    Statement statement = connection.createStatement();
-//                    statement.executeUpdate("insert into HighScore values ('" + tf.getText() + "', 0)");
-//
-//                    connection.close();
+                    // Class.forName("com.mysql.cj.jdbc.Driver");
+                    // Connection connection = DriverManager.getConnection(url, username, password);
+                    // Statement statement = connection.createStatement();
+                    // statement.executeUpdate("insert into HighScore values ('" + tf.getText() +
+                    // "', 0)");
+
+                    // connection.close();
                     client.sendInitRequest();
                     client.listenForPacket();
                     new GameFrame(client);
@@ -39,6 +41,12 @@ public class LoginFrame {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+                // catch (ClassNotFoundException ex) {
+                // throw new RuntimeException(ex);
+                // }
+                // (SQLException ex) {
+                // throw new RuntimeException(ex);
+                // }
             }
         });
         f.add(b);

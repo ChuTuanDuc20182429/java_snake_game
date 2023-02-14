@@ -49,7 +49,7 @@ public class Client {
     }
 
     public void sendPacket(PlayerDataPacket packet) {
-        System.out.println("send command");
+        // System.out.println("send command");
         try {
             if (socket.isConnected()) {
                 out.writeObject(packet);
@@ -107,7 +107,8 @@ public class Client {
                         listener.received(packet, getClient());
                     }
                 } catch (IOException e) {
-                    // e.printStackTrace();
+                    // e.printStackTrace();name);
+                    // System.out.println("direction: " + packet.direction);
                     closeEveryThing(socket, out, in);
                 } catch (ClassNotFoundException e) {
                     // e.printStackTrace();
